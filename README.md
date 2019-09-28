@@ -7,7 +7,8 @@
 
 ---
 ## 工程
-1. 学習データとしてpcapファイルを下記のようなフォーマットに加工する
+1. 学習データとしてpcapファイルを下記のようなフォーマットに加工する<br>
+<strong><font color="#ff00ff">できたよ！！</strong>
 ~~~python
 [[b'\x1f@\x8d\x08P\xdc^\xc7\x95\x9b', 0], [b'\x1f@\x8d\x08P\xdc^\xc7\x95\x9b', 1]]
 ~~~
