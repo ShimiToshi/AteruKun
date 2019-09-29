@@ -37,3 +37,6 @@ def pcap2byte(pcap_path):
             """
             packet_data_list.append([data, 1])
     return packet_data_list
+
+
+def gen_rand_data(length):

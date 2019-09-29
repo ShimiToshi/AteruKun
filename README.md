@@ -8,12 +8,14 @@
 ---
 ## 工程
 1. 学習データとしてpcapファイルを下記のようなフォーマットに加工する<br>
-<strong><font color="#ff00ff">できたよ！！</strong>
+<strong><font color="#ff00ff">できたよ！！</strong><br>
+<p><strong>pcap2byted.pyの使い方:<br> import後, <br>pcap2byted.pcap2byte("pcapへのパス")<br>で全部いい感じに返ってくる</strong/></p>
+
 ~~~python
 [[b'\x1f@\x8d\x08P\xdc^\xc7\x95\x9b', 0], [b'\x1f@\x8d\x08P\xdc^\xc7\x95\x9b', 1]]
 ~~~
 2. 1のデータで学習させ、意味のあるバイト配列と意味のないバイト配列を見分けられるようなモデルをつくる。
-3. NEATという遺伝子的強化学習アルゴリズムを使いたいと思っている。例えばリンク→[neat-python](https://github.com/CodeReclaimers/neat-python)
+3. NEATという遺伝子的強化学習アルゴリズムを使いたいと思っている。<br>例えばリンク→[neat-python](https://github.com/CodeReclaimers/neat-python)
 4. 3の強化学習で暗号解読をさせてみたい。
 ### 終わり
 ---
