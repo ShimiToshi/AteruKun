@@ -1,5 +1,5 @@
 import dpkt
-
+import pickle
 
 def pcap2byte(pcap_path):
     """
@@ -26,7 +26,10 @@ def pcap2byte(pcap_path):
             """
             ip = eth.data
             tcp = ip.data
-            data = tcp.data
+            try:
+                data = tcp.data
+            except AttributeError:
+                continue
             """
             ここでいったんデータ長が0じゃないか確認、0だったら弾く
             """
@@ -37,6 +40,9 @@ def pcap2byte(pcap_path):
             """
             packet_data_list.append([data, 1])
     return packet_data_list
-
-
-def gen_rand_data(length):
+#
+# path = "D:\Documents\Python\hex-chars\Mr.Ateru\pcap_parser\capture_good_packets.pcap"
+#
+# a = pcap2byte(path)
+# with open("labled_good_data.pickle", 'wb') as file:
+#     pickle.dump(a, file)
