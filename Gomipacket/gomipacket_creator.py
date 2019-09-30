@@ -1,3 +1,8 @@
 import random
-for i in range(256):
-    print(int(random.random()*256))
+
+
+def create_gomi(byte_length):
+    return bytes([int(random.random()*256) for i in range(byte_length)])
+
+a = create_gomi(8)
+print(a)
