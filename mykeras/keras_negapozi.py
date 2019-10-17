@@ -54,20 +54,30 @@ class NegaPosi:
 
     history_dict = {}
 
-    def __init__(self, filename, filename2=None):
+    def __init__(self, filename=None, filename2=None):
         self.filename = filename
         bdata = loadpickle(filename)
         self.base1_data, self.base1_label = convertdata(bdata)
 
         print("Loaded and Converted Datas 1: ", len(self.base1_data))
 
-        if filename:
-            self.filename2 = filename2
+        self.filename2 = filename2
+        if filename2:
             bdata = loadpickle(filename2)
             self.base2_data, self.base2_label = convertdata(bdata)
             print("Loaded and Converted Datas 2: ", len(self.base2_data))
 
-        self.separate_datas()
+        if filename == None and filename2 == None:
+            self.mode = "loaded"
+
+        if filename2:
+            self.separate_datas()
+        else:
+            self.noseparate_datas()
+
+    def noseparate_datas(self):
+        self.train_data = self.base1_data
+        self.train_label = self.base1_label
 
     def separate_datas(self):
         # datas をtrain とtestデータに分割（2等分）
@@ -92,8 +102,11 @@ class NegaPosi:
     def pre_convertdata(self):
         self.ctrain_data, self.ctrain_label = self.convertdata(self.train_data, self.train_label)
         print("Converted Train Status (LEN: data, label):", len(self.ctrain_data), len(self.ctrain_label))
-        self.ctest_data, self.ctest_label = self.convertdata(self.test_data, self.test_label)
-        print("Converted  Test Status (LEN: data, label):", len(self.ctest_data), len(self.ctest_label))
+
+        if self.filename2:
+            self.ctest_data, self.ctest_label = self.convertdata(self.test_data, self.test_label)
+            print("Converted  Test Status (LEN: data, label):", len(self.ctest_data), len(self.ctest_label))
+        return self.ctrain_data, self.ctrain_label
 
     def convertdata(self, data, label):
         df = pd.DataFrame(data)
@@ -183,3 +196,8 @@ class NegaPosi:
         # 学習済みの重みを保存
         self.model.save_weights(savename + '.h5')
         print("loadfile : ", savename, "(json, h5)", )
+
+    def predict(self, data):
+
+        y = self.model.predict(np.array(data))
+        print(y) # [[ 0.17429274]]
