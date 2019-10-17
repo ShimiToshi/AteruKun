@@ -1,3 +1,6 @@
+# 2048KeyのGA実装。
+# 参考にしたサイト：https://tech.mof-mof.co.jp/blog/ga-one-max-problem.html
+
 import random
 import custom_functions
 
@@ -20,9 +23,14 @@ toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.sin
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
 
-# 評価関数
+# 評価関数はとりあえずランダム関数で置換してｱﾘﾏｽ。
+# 評価関数　＞　[00-ff] * 128のリストを渡してるのでそこら辺の変換からが必要。
+# ||||||||||||||||||||||||【関数の仕様】||||||||||||||||||||||||
+# [00-ff]*128 -> 2048key -> 復号 -> シミズの関数で評価 -> 返す
 def evalOneMax(individual):
     return random.random(),
+# ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
 
 # 評価関数を登録
 toolbox.register("evaluate", evalOneMax)
