@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from keras import models, layers
+from keras.models import model_from_json
 
 def loadpickle(filename):
     with open(filename, 'rb') as data:
@@ -168,3 +169,17 @@ class NegaPosi:
             plt.show()
         else:
             print("Cant Solve Request... -> Not start")
+
+    def loadmodel(self, filename):
+        self.model = model_from_json(open(filename + ".json", 'r').read())
+        # 重みの読み込み
+        self.model.load_weights(filename + ".h5")
+
+        print("savefile : ", filename, "(json, h5)", )
+
+    def savemodel(self, savename):
+        open(savename +".json", "w").write(self.model.to_json())
+
+        # 学習済みの重みを保存
+        self.model.save_weights(savename + '.h5')
+        print("loadfile : ", savename, "(json, h5)", )
