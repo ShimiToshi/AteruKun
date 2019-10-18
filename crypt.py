@@ -11,10 +11,10 @@ class AESCipher(object):
     def __init__(self, key):
         if type(key) == bytes:
             self.key = key
-        if type(key) == str:
+        elif type(key) == str:
             self.key = bytes.fromhex(key)
         else:
-            raise ValueError("Weird Key...")
+            raise ValueError("Weird Key... %s" % type(key))
 
     def encrypt(self, raw):
         iv = Random.get_random_bytes(AES.block_size)
@@ -46,7 +46,7 @@ def random_byte():
 text = 'plain text'
 key = [random_byte() for i in range(32)]
 key = ''.join([i[2:] for i in key])
-key =
+key = b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
 cipher = AESCipher(key)
 encrypted = cipher.encrypt(text)
 print(encrypted)  # -> b'MLXpzLheE1383lHyVkGzoppMmO78otn3d0BOgh7WGdw='
