@@ -10,16 +10,14 @@ from deap import tools
 from mykeras import keras_negapozi as myk
 
 import crypt
-real_key = ""
+
+real_key = b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
 
 # 初期暗号器作成
-cipher = crypt.AESCipher(key)
-
-# ここに暗号器を使って平文に何かする
-
-crypted_str = ""
-
-
+cipher = crypt.AESCipher(real_key)
+msg = "This is the message which will appear when decrypted with the correct key."
+msg = "plain text"
+crypted_str = cipher.encrypt(msg)
 # GAの初期セッティング
 creator.create("FitnessMax", base.Fitness, weights=(1.0,))
 creator.create("Individual", list, fitness=creator.FitnessMax)
@@ -33,9 +31,9 @@ filename = "./DATA4train_test/labled_good_data.pickle"
 cls = myk.NegaPosi(filename, None)
 cls.loadmodel("good")
 
-make_key = ""
 # [00-ff]*128 -> 2048key -> 復号 -> シミズの関数で評価 -> 返す
 def kerasnp(Individual):
+    make_key = ''.join([i[2:] for i in Individual])
     dcipher = crypt.AESCipher(make_key)
     decrypted_str = dcipher.decrypt(crypted_str)
     cdata, clabel = cls.convertdata(decrypted_str)
@@ -58,6 +56,9 @@ def GA():
     fitnesses = list(map(toolbox.evaluate, pop))
     for ind, fit in zip(pop, fitnesses):  # zipは複数変数の同時ループ
         # 適合性をセットする
+        print(type(ind), dir(ind), ind)
+        break
+        make_key = ind
         ind.fitness.values = fit
 
     print("  %i の個体を評価" % len(pop))
@@ -99,6 +100,7 @@ def GA():
         invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
         fitnesses = map(toolbox.evaluate, invalid_ind)
         for ind, fit in zip(invalid_ind, fitnesses):
+            make_key = ind
             ind.fitness.values = fit
 
         print("  %i の個体を評価" % len(invalid_ind))
