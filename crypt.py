@@ -1,43 +1,39 @@
+# -*- coding: utf-8 -*-
 import base64
+import hashlib
 from Crypto import Random
 from Crypto.Cipher import AES
+from Crypto.Util import Padding
 
 class AESCipher(object):
-    def __init__(self, key, block_size=32):
-        self.bs = block_size
-        if len(key) >= len(str(block_size)):
-            self.key = key[:block_size]
-        else:
-            self.key = self._pad(key)
+    def __init__(self, key):
+        self.key = (hashlib.md5(key.encode('utf-8')).hexdigest()).encode('utf-8')
 
     def encrypt(self, raw):
-        raw = self._pad(raw)
-        iv = Random.new().read(AES.block_size)
-        print(type(iv), iv)
-        # iv = biv.encode('utf-8')
-        # print(type(iv), iv)
-
+        iv = Random.get_random_bytes(AES.block_size)
         cipher = AES.new(self.key, AES.MODE_CBC, iv)
-        return base64.b64encode(iv + cipher.encrypt(raw))
+        data = Padding.pad(raw.encode('utf-8'), AES.block_size, 'pkcs7')
+        return base64.b64encode(iv + cipher.encrypt(data))
 
     def decrypt(self, enc):
         enc = base64.b64decode(enc)
         iv = enc[:AES.block_size]
         cipher = AES.new(self.key, AES.MODE_CBC, iv)
-        return self._unpad(cipher.decrypt(enc[AES.block_size:]))
+        data = Padding.unpad(cipher.decrypt(enc[AES.block_size:]), AES.block_size, 'pkcs7')
+        return data.decode('utf-8')
 
-    def _pad(self, s):
-        return s + (self.bs - len(s) % self.bs) * chr(self.bs - len(s) % self.bs)
+# -*- coding: utf-8 -*-
+import random
+import string
+from crypt import AESCipher
 
-    def _unpad(self, s):
-        return s[:-ord(s[len(s)-1:])]
+text = 'plain text'
+key = ''.join([random.choice(string.ascii_letters + string.digits) for i in range(32)])  # -> '4yKxQ5hMcUJixcG4Z8Lc5ZPBr5McS65X'
 
+cipher = AESCipher(key)
 
-cipher = AESCipher("PkDv17c6xxiqXPrvG2cUiq90VIrERfthHuViKapv6E1F7E0IgP")
+encrypted = cipher.encrypt(text)
+print(encrypted)  # -> b'MLXpzLheE1383lHyVkGzoppMmO78otn3d0BOgh7WGdw='
 
-# 暗号化
-password = cipher.encrypt("hogefuga")
-print(password) # -> H/LfZg82FOdHhnructCHzfYnVgCOvjgEUGXXDFpjiYLBHw4Zflk/m2N9zEVwz6eC
-
-#復号化
-print(cipher.decrypt(password)) # -> hogefuga
+decrypted = cipher.decrypt(encrypted)
+print(decrypted)  # -> 'plain text'
