@@ -17,8 +17,8 @@ creator.create("Individual", list, fitness=creator.FitnessMax)
 toolbox = base.Toolbox()
 # 鍵の素を生成をする関数を定義(00 - FF をランダムで選ぶ)
 toolbox.register("single_byte", custom_functions.random_byte)
-# 個体を生成する関数を定義(鍵を作るためにIndividualクラスでsingle_byteの値を128個持つ)
-toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.single_byte, 128)
+# 個体を生成する関数を定義(鍵を作るためにIndividualクラスでsingle_byteの値を32個持つ)
+toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.single_byte, 32)
 # 鍵の集団を生成する関数を定義(多量の鍵を持つlist)
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
@@ -111,13 +111,14 @@ if __name__ == '__main__':
         sum2 = sum(x*x for x in fits)
         std = abs(sum2 / length - mean**2)**0.5
 
-        # print("  Min %s" % min(fits))
-        # print("  Max %s" % max(fits))
-        # print("  Avg %s" % mean)
-        # print("  Std %s" % std)
+        print("  Min %s" % min(fits))
+        print("  Max %s" % max(fits))
+        print("  Avg %s" % mean)
+        print("  Std %s" % std)
 
     print("-- 進化終了 --")
 
     best_ind = tools.selBest(pop, 1)[0]
     print(list(best_ind))
     print("最も優れていた個体: %s, %s" % (best_ind, best_ind.fitness.values))
+    print(''.join([i[2:] for i in best_ind]))

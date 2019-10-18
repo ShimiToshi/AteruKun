@@ -1,6 +1,7 @@
 import dpkt
 import pickle
 
+
 def pcap2byte(pcap_path):
     """
     :param pcap_path: リストデータに変換したいpcapファイルのパスを入れる
