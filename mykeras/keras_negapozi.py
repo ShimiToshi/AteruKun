@@ -108,7 +108,7 @@ class NegaPosi:
             print("Converted  Test Status (LEN: data, label):", len(self.ctest_data), len(self.ctest_label))
         return self.ctrain_data, self.ctrain_label
 
-    def convertdata(self, data, label):
+    def convertdata(self, data, label=None):
         df = pd.DataFrame(data)
         print(df.head())
 
@@ -198,6 +198,6 @@ class NegaPosi:
         print("loadfile : ", savename, "(json, h5)", )
 
     def predict(self, data):
-
         y = self.model.predict(np.array(data))
         print(y) # [[ 0.17429274]]
+        return y[0][0]
