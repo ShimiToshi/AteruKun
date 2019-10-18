@@ -1,6 +1,6 @@
 # 2048KeyのGA実装。
 # 参考にしたサイト：https://tech.mof-mof.co.jp/blog/ga-one-max-problem.html
-
+import re
 import random
 import custom_functions
 
@@ -16,7 +16,6 @@ real_key = b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
 # 初期暗号器作成
 cipher = crypt.AESCipher(real_key)
 msg = "This is the message which will appear when decrypted with the correct key."
-msg = "plain text"
 crypted_str = cipher.encrypt(msg)
 # GAの初期セッティング
 creator.create("FitnessMax", base.Fitness, weights=(1.0,))
@@ -36,6 +35,7 @@ def kerasnp(Individual):
     make_key = ''.join([i[2:] for i in Individual])
     dcipher = crypt.AESCipher(make_key)
     decrypted_str = dcipher.decrypt(crypted_str)
+
     cdata, clabel = cls.convertdata(decrypted_str)
     return cls.predict(cdata),
 

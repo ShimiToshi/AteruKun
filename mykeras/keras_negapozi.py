@@ -33,11 +33,12 @@ def strtoint(str, count=None):
 def change_baseformat(df):
     # 入力次元数を合わせるため、最大次元数を調べる
     maxlen = max([len(str(i)) for i in df.values])
-    print("MAX Dimension :", maxlen)
+    # print("MAX Dimension :", maxlen)
 
     ret = []
     for values in df.values:
         ret.append(strtoint(str(values)))
+
     return pd.DataFrame(ret), maxlen
 
 class NegaPosi:
@@ -109,11 +110,18 @@ class NegaPosi:
         return self.ctrain_data, self.ctrain_label
 
     def convertdata(self, data, label=None):
-        df = pd.DataFrame(data)
-        print(df.head())
+
+        lis = ""
+        for i in data:
+            lis += chr(i)
+        df = pd.DataFrame([lis])
 
         # リストの形を学習しやすいように変換
-        ctrain_data, self.maxdimension = change_baseformat(df)
+        if not self.maxdimension:
+            ctrain_data, self.maxdimension = change_baseformat(df)
+        else:
+            ctrain_data, hoge = change_baseformat(df)
+
         cdata = ctrain_data.fillna(ord(" ")).values
         cdata = cdata.astype("float32")
         clabel = label
@@ -187,17 +195,24 @@ class NegaPosi:
         self.model = model_from_json(open(filename + ".json", 'r').read())
         # 重みの読み込み
         self.model.load_weights(filename + ".h5")
+        print(self.model.summary())
+        self.maxdimension = self.model.get_input_shape_at(0)[1]
 
-        print("savefile : ", filename, "(json, h5)", )
+        print("loadfile : ", filename, "(json, h5)", )
 
     def savemodel(self, savename):
         open(savename +".json", "w").write(self.model.to_json())
 
         # 学習済みの重みを保存
         self.model.save_weights(savename + '.h5')
-        print("loadfile : ", savename, "(json, h5)", )
+        print("savefile : ", savename, "(json, h5)", )
 
     def predict(self, data):
-        y = self.model.predict(np.array(data))
-        print(y) # [[ 0.17429274]]
+
+        data2 = data.tolist()[0]
+        for i in range(self.maxdimension - len(data2)):
+            data2.append(ord(" "))
+        data = np.array([data2])
+        y = self.model.predict(data)
+        print(y[0][0]) # [[ 0.17429274]]
         return y[0][0]

@@ -18,16 +18,29 @@ class AESCipher(object):
     def encrypt(self, raw):
         iv = Random.get_random_bytes(AES.block_size)
         cipher = AES.new(self.key, AES.MODE_CBC, iv)
+        # print("padd  ", len(raw), raw, type(raw))
         data = Padding.pad(raw.encode('utf-8'), AES.block_size, 'pkcs7')
+        # print("padded", len(data), data, type(data))
         return base64.b64encode(iv + cipher.encrypt(data))
 
     def decrypt(self, enc):
-        print("!!!!!", enc, len(enc), type(enc))
         enc = base64.b64decode(enc)
         iv = enc[:AES.block_size]
         cipher = AES.new(self.key, AES.MODE_CBC, iv)
-        data = Padding.unpad(cipher.decrypt(enc[AES.block_size:]), AES.block_size, 'pkcs7')
-        return data.decode('utf-8')
+        data = cipher.decrypt(enc[AES.block_size:])
+        # print("unpad", len(data), data, type(data))
+
+        try:
+            data = Padding.unpad(data, AES.block_size, 'pkcs7')
+        except ValueError:
+            pass
+        # print("unpadd", len(data), data, type(data))
+
+        try:
+            d = data.decode('utf-8')
+        except UnicodeDecodeError:
+            d = data
+        return d
 
 
 import random
@@ -43,16 +56,17 @@ def random_byte():
 
     return h
 
-text = 'plain text'
-# key = [random_byte() for i in range(32)]
-# key = ''.join([i[2:] for i in key])
-key = b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-cipher = AESCipher(key)
-encrypted = cipher.encrypt(text)
-print(encrypted, len(encrypted))  # -> b'MLXpzLheE1383lHyVkGzoppMmO78otn3d0BOgh7WGdw='
-
-decrypted = cipher.decrypt(encrypted)
-print(decrypted)  # -> 'plain text'
+# print(AES.block_size)
+# text = 'plain text'
+# # key = [random_byte() for i in range(32)]
+# # key = ''.join([i[2:] for i in key])
+# key = b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+# cipher = AESCipher(key)
+# encrypted = cipher.encrypt(text)
+# print(encrypted, len(encrypted))  # -> b'MLXpzLheE1383lHyVkGzoppMmO78otn3d0BOgh7WGdw='
+#
+# decrypted = cipher.decrypt(encrypted)
+# print(decrypted)  # -> 'plain text'
 
 # obj.encrypt(pad(message, BLOCK_SIZE))
 # obj2.decrypt(unpad(ciphertext, BLOCK_SIZE))
