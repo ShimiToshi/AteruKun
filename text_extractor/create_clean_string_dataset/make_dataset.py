@@ -1,6 +1,6 @@
 import pickle
 
-filename = [r'D:\Documents\Python\hex-chars\Mr.Ateru\text_extractor\text2send_%s' % num for num in range(1, 6)]
+filename = [r'D:\Documents\Python\hex-chars\Mr.Ateru\text_extractor\text2send_%s' % num for num in range(1, 8)]
 fulltext = []
 for n in filename:
     with open(n, 'r', encoding='utf-8') as file:
@@ -9,9 +9,10 @@ for n in filename:
         data = data.split(' ')
         fulltext.append(data)
 zenbu = []
-for j in range(5):
+for j in range(7):
     aaa = fulltext[j]
-    split = [aaa[i:i+5] for i in range(0, len(aaa), 5)]
+    aaa = ' '.join(aaa)
+    split = [aaa[i:i+20] for i in range(0, len(aaa), 20)]
     split = [' '.join(i) for i in split]
     zenbu.extend(split)
 
@@ -32,4 +33,3 @@ with open(r"D:\Documents\Python\hex-chars\Mr.Ateru\DATA4train_test\plaintxt10wor
 
 with open(r"D:\Documents\Python\hex-chars\Mr.Ateru\DATA4train_test\plaintxt10words_gomi.pickle", 'wb') as file:
     pickle.dump(gomi_zenbu, file)
-
