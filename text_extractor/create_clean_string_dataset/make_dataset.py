@@ -11,7 +11,7 @@ for n in filename:
 zenbu = []
 for j in range(5):
     aaa = fulltext[j]
-    split = [aaa[i:i+10] for i in range(0, len(aaa), 10)]
+    split = [aaa[i:i+5] for i in range(0, len(aaa), 5)]
     split = [' '.join(i) for i in split]
     zenbu.extend(split)
 
@@ -32,3 +32,4 @@ with open(r"D:\Documents\Python\hex-chars\Mr.Ateru\DATA4train_test\plaintxt10wor
 
 with open(r"D:\Documents\Python\hex-chars\Mr.Ateru\DATA4train_test\plaintxt10words_gomi.pickle", 'wb') as file:
     pickle.dump(gomi_zenbu, file)
+
