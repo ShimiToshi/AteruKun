@@ -48,8 +48,7 @@ def kerasnp(Individual):
     make_key = ''.join([i[2:] for i in Individual])
     dcipher = crypt.AESCipher(make_key)
     decrypted_str = dcipher.decrypt(crypted_str)
-    print(decrypted_str)
-    input()
+    # print(decrypted_str)
     cdata, clabel = cls.convertdata_load(decrypted_str)
     return cls.predict(cdata),
 
@@ -59,7 +58,7 @@ def print_last(Individual):
     dcipher = crypt.AESCipher(make_key)
     decrypted_str = dcipher.decrypt(crypted_str)
     decrypted_message = ''.join([chr(i) for i in decrypted_str])
-    print('###decypted_message', decrypted_message)
+    print('### decypted_message', decrypted_message)
     # cdata, clabel = cls.convertdata(decrypted_str)
     return decrypted_str, Individual
 
@@ -141,6 +140,13 @@ def GA():
         sum2 = sum(x*x for x in fits)
         std = abs(sum2 / length - mean**2)**0.5
 
+        print("== この世代での上位5個体 ==")
+        best_ind = tools.selBest(pop, 5)
+        for i in best_ind:
+            key = ''.join([j[2:] for j in i])
+            print("### Key", key)
+            print_last(i)
+        print("===========================")
         print("  Min %s" % min(fits))
         print("  Max %s" % max(fits))
         print("  Avg %s" % mean)
