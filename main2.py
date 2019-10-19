@@ -15,9 +15,9 @@ real_key = b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
 
 # 初期暗号器作成
 cipher = crypt.AESCipher(real_key)
-msg = "GET / HTTP/1.1\r\nHost: 192.168.1.12:8000\r\nUser-Agent: curl/7.52.1\r\nAccept: */*\r\n\r\n Crack this!"
-crypted_str = cipher.encrypt(msg)
-
+msg = bytes([int(random.random()*256) for i in range(32)])
+msg = b"plain teatsfdfeteatsdt"
+crypted_str = cipher.encrypt(str(msg))
 
 # GAの初期セッティング
 creator.create("FitnessMax", base.Fitness, weights=(1.0,))
@@ -30,7 +30,16 @@ toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 # NegaPosi のモデルを用意
 filename = "./DATA4train_test/labled_good_data.pickle"
 cls = myk.NegaPosi(filename, None)
-cls.loadmodel("good")
+cls.loadmodel("newone")
+
+data, hoge = cls.convertdata_load(msg)
+print(cls.predict(data), msg)
+
+msg = b'\x95\xa7\x82\xdc\xc3\xf6I9\xee\x8a\x16\xbd\x07!qf\xf2].\x9e\xfe)\xfai\x04\xefm\x80\\7\xea]\xe2*\xa6\xf57\xd3\x14\xd7\xe7\xdbq\x83'
+data, hoge = cls.convertdata_load(msg)
+print(cls.predict(data), msg)
+
+input()
 
 
 # [00-ff]*128 -> 2048key -> 復号 -> シミズの関数で評価 -> 返す
@@ -38,7 +47,7 @@ def kerasnp(Individual):
     make_key = ''.join([i[2:] for i in Individual])
     dcipher = crypt.AESCipher(make_key)
     decrypted_str = dcipher.decrypt(crypted_str)
-    cdata, clabel = cls.convertdata(decrypted_str)
+    cdata, clabel = cls.convertdata_load(decrypted_str)
     return cls.predict(cdata),
 
 

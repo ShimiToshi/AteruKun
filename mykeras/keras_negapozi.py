@@ -30,16 +30,16 @@ def strtoint(str, count=None):
             ret.append(ord(char))
     return ret
 
-def change_baseformat(df):
+def change_baseformat(df, maxlen=None):
     # 入力次元数を合わせるため、最大次元数を調べる
-    maxlen = max([len(str(i)) for i in df.values])
-    # print("MAX Dimension :", maxlen)
-
     ret = []
+    cnt = 0
     for values in df.values:
-        ret.append(strtoint(str(values)))
-
-    return pd.DataFrame(ret), maxlen
+        cnt+=1
+        re = strtoint(str(values[0]))
+        re += [ord(" ") for i in range(maxlen - len(re))]
+        ret.append(re)
+    return pd.DataFrame(ret)
 
 class NegaPosi:
 
@@ -54,6 +54,8 @@ class NegaPosi:
     test_label = []
 
     history_dict = {}
+
+    maxdimension = None
 
     def __init__(self, filename=None, filename2=None):
         self.filename = filename
@@ -73,6 +75,7 @@ class NegaPosi:
 
         if filename2:
             self.separate_datas()
+            print("separateData filename2 :", filename2)
         else:
             self.noseparate_datas()
 
@@ -96,9 +99,17 @@ class NegaPosi:
             self.train_label.extend(self.base2_label[0:harf])
             self.test_label.extend(self.base2_label[harf:])
 
+        m = max([len(str(i)) for i in self.train_data])
+        m2= max([len(str(i)) for i in self.test_data])
+        self.maxdimension = m
+        print("MAX : ", m, m2)
+        if m<m2:
+            self.maxdimension = m2
+
         print("Separated Train and Test Datas :")
         print("Train Status (LEN: data, label):", len(self.train_data), len(self.train_label))
         print(" Test Status (LEN: data, label):", len(self.test_data), len(self.test_label))
+        print("Max Dimension :", self.maxdimension)
 
     def pre_convertdata(self):
         self.ctrain_data, self.ctrain_label = self.convertdata(self.train_data, self.train_label)
@@ -111,24 +122,32 @@ class NegaPosi:
 
     def convertdata(self, data, label=None):
 
-        lis = ""
-        for i in data:
-            lis += chr(i)
-        df = pd.DataFrame([lis])
-
-        # リストの形を学習しやすいように変換
-        if not self.maxdimension:
-            ctrain_data, self.maxdimension = change_baseformat(df)
-        else:
-            ctrain_data, hoge = change_baseformat(df)
+        df = pd.DataFrame(data)
+        ctrain_data= change_baseformat(df, self.maxdimension)
 
         cdata = ctrain_data.fillna(ord(" ")).values
         cdata = cdata.astype("float32")
         clabel = label
         return cdata, clabel
 
+    def convertdata_load(self, data, label=None):
+        lis = ""
+        for i in data:
+            lis += chr(i)
+        df = pd.DataFrame([lis])
+
+        # リストの形を学習しやすいように変換
+        ctrain_data= change_baseformat(df, self.maxdimension)
+
+        cdata = ctrain_data.fillna(ord(" ")).values
+        cdata = cdata.astype("float32")
+        clabel = label
+        return cdata, clabel
+
+
     def makemodel(self):
         self.model = models.Sequential()
+        print("MakeModel maxdimension: ", self.maxdimension)
         self.model.add(layers.Dense(16, activation="relu", input_shape=(self.maxdimension,)))
         self.model.add(layers.Dense(16, activation='relu'))
         self.model.add(layers.Dense(1, activation='sigmoid'))
@@ -216,3 +235,10 @@ class NegaPosi:
         y = self.model.predict(data)
         # print(y[0][0]) # [[ 0.17429274]]
         return y[0][0]
+
+    def display_cdata(self):
+        print("Check CDatas: ")
+        print(self.ctrain_data[:5], self.ctrain_label[:5])
+        print(self.ctest_data[:5], self.ctest_label[:5])
+        print(self.ctrain_data[-5:-1], self.ctrain_label[-5:-1])
+        print(self.ctest_data[-5:-1], self.ctest_label[-5:-1])
