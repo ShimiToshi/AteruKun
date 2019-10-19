@@ -21,8 +21,8 @@ def create_gomi(byte_length):
     return bytes([int(random.random()*256) for i in range(byte_length)])
 
 
-gomi_zenbu = [i.encode('utf-8') for i in zenbu]
-gomi_zenbu = [[create_gomi(len(i)), 0] for i in gomi_zenbu]
+zenbu = [i.encode('utf-8') for i in zenbu]
+gomi_zenbu = [[create_gomi(len(i)), 0] for i in zenbu]
 print(gomi_zenbu)
 
 ###############
