@@ -15,9 +15,9 @@ real_key = b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
 
 # 初期暗号器作成
 cipher = crypt.AESCipher(real_key)
-msg = bytes([int(random.random()*256) for i in range(32)])
 msg = b"plain teatsfdfeteatsdt"
 crypted_str = cipher.encrypt(str(msg))
+decrypted_str = cipher.decrypt(crypted_str)
 
 # GAの初期セッティング
 creator.create("FitnessMax", base.Fitness, weights=(1.0,))
@@ -35,18 +35,21 @@ cls.loadmodel("newone")
 data, hoge = cls.convertdata_load(msg)
 print(cls.predict(data), msg)
 
-msg = b'\x95\xa7\x82\xdc\xc3\xf6I9\xee\x8a\x16\xbd\x07!qf\xf2].\x9e\xfe)\xfai\x04\xefm\x80\\7\xea]\xe2*\xa6\xf57\xd3\x14\xd7\xe7\xdbq\x83'
+msg = b'q\x1a\xd0@H\x08e\xf0t \xc93\xc9Q\x86\xfbr\xe4\xa2\xa1z\x9d_U\x8c[M\x8bP\x85\x10j\xdb\x95\x7f\xd4\xf3c\xb0\xef\x05\xb8n\xd9T\x8bN\xa1\xff\xa3k\xeb\xc3\xf3\x13\xa4q\xae\xfe\xc1\x97\x05V\x85X\xc5b\x0ct\xc3\xacq\xef\xd6\x08\x8a\x80= \x862'
 data, hoge = cls.convertdata_load(msg)
 print(cls.predict(data), msg)
 
-input()
-
+msg = b'GET / HTTP/1.1\r\nHost: 192.168.1.12:8000\r\nUser-Agent: curl/7.52.1\r\nAccept: */*\r\n\r\n'
+data, hoge = cls.convertdata_load(msg)
+print(cls.predict(data), msg)
 
 # [00-ff]*128 -> 2048key -> 復号 -> シミズの関数で評価 -> 返す
 def kerasnp(Individual):
     make_key = ''.join([i[2:] for i in Individual])
     dcipher = crypt.AESCipher(make_key)
     decrypted_str = dcipher.decrypt(crypted_str)
+    print(decrypted_str)
+    input()
     cdata, clabel = cls.convertdata_load(decrypted_str)
     return cls.predict(cdata),
 
