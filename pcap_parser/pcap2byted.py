@@ -42,8 +42,10 @@ def pcap2byte(pcap_path):
             packet_data_list.append([data, 1])
     return packet_data_list
 #
-# path = "D:\Documents\Python\hex-chars\Mr.Ateru\pcap_parser\capture_good_packets.pcap"
-#
-# a = pcap2byte(path)
+path = "D:\Documents\Python\hex-chars\Mr.Ateru\pcap_parser\capture_good_packets.pcap"
+a = pcap2byte(path)
+for i in a[5000:5010]:
+    print(i)
+
 # with open("labled_good_data.pickle", 'wb') as file:
 #     pickle.dump(a, file)

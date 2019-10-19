@@ -214,5 +214,5 @@ class NegaPosi:
             data2.append(ord(" "))
         data = np.array([data2])
         y = self.model.predict(data)
-        print(y[0][0]) # [[ 0.17429274]]
+        # print(y[0][0]) # [[ 0.17429274]]
         return y[0][0]

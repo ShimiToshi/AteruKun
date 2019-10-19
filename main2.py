@@ -15,8 +15,10 @@ real_key = b'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
 
 # 初期暗号器作成
 cipher = crypt.AESCipher(real_key)
-msg = "This is the message which will appear when decrypted with the correct key."
+msg = "GET / HTTP/1.1\r\nHost: 192.168.1.12:8000\r\nUser-Agent: curl/7.52.1\r\nAccept: */*\r\n\r\n Crack this!"
 crypted_str = cipher.encrypt(msg)
+
+
 # GAの初期セッティング
 creator.create("FitnessMax", base.Fitness, weights=(1.0,))
 creator.create("Individual", list, fitness=creator.FitnessMax)
@@ -30,14 +32,25 @@ filename = "./DATA4train_test/labled_good_data.pickle"
 cls = myk.NegaPosi(filename, None)
 cls.loadmodel("good")
 
+
 # [00-ff]*128 -> 2048key -> 復号 -> シミズの関数で評価 -> 返す
 def kerasnp(Individual):
     make_key = ''.join([i[2:] for i in Individual])
     dcipher = crypt.AESCipher(make_key)
     decrypted_str = dcipher.decrypt(crypted_str)
-
     cdata, clabel = cls.convertdata(decrypted_str)
     return cls.predict(cdata),
+
+
+def print_last(Individual):
+    make_key = ''.join([i[2:] for i in Individual])
+    dcipher = crypt.AESCipher(make_key)
+    decrypted_str = dcipher.decrypt(crypted_str)
+    decrypted_message = ''.join([chr(i) for i in decrypted_str])
+    print('###decypted_message', decrypted_message)
+    # cdata, clabel = cls.convertdata(decrypted_str)
+    return decrypted_str, Individual
+
 
 toolbox.register("evaluate", kerasnp)
 toolbox.register("mate", tools.cxTwoPoint)
@@ -127,5 +140,6 @@ def GA():
     print(list(best_ind))
     print("最も優れていた個体: %s, %s" % (best_ind, best_ind.fitness.values))
     print(''.join([i[2:] for i in best_ind]))
+    print(print_last(best_ind))
 
 GA()
